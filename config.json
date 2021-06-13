@@ -1,0 +1,11 @@
+{
+    "extract_source":"/home/schoe7/project/show_us_the_data/data/train/",
+    "extract_dest":"/home/schoe7/project/show_us_the_data/extract/data_ign/",
+    "reference": "/home/schoe7/project/show_us_the_data/data/train.csv",
+    "stopwords": "/home/schoe7/project/show_us_the_data/extract/resources/nltk/stopwords/english",
+    "padding": 7,
+    "remove_stopwords": true,
+    "stopwords_plus": [],
+    "sample_dist": "normal",
+    "percent_noise": 15
+}

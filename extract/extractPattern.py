@@ -21,7 +21,8 @@ def extract(data, pattern, options={}):
     tag = options['tag'] if 'tag' in options.keys() else ''
     padding = options['padding'] if 'padding' in options.keys() else 3
     rsw = options['remove_stopwords'] if 'remove_stopwords' in options.keys() else False
-
+    noise = options['noise'] if 'noise' in options else False
+    
     try:
         options['version']
     except:

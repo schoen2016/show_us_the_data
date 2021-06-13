@@ -29,53 +29,55 @@ def readJSON(filename):
     fopen = open(filename)
     return json.load(fopen) 
 
-# user input
-config_path = argv[1]
-step=int(argv[2])
-iteration=int(argv[3])
+def run(config, step, iteration, noise = False):
+     # batch processing winodow
+    start = (iteration-1) * step
+    end = start + step
 
-# batch processing winodow
-start = (iteration-1) * step
-end = start + step
+    # read config
+    source = config['source']
+    padding = config['padding']
+    # read reference csv
+    ref = pd.read_csv(config['reference'])
+    end = end if end < len(ref) else len(ref)
+    ref = ref[start:end]
 
-# read config
-config = readJSON(config_path)
-source = config['source']
-padding = config['padding']
-
-# read reference csv
-ref = pd.read_csv(config['reference'])
-end = end if end < len(ref) else len(ref)
-ref = ref[start:end]
-
-for index,row in ref.iterrows():
-    
-    pattern = row['cleaned_label']
-    file_id = row['Id']
-    filename = file_id + '.json'
-    destPath = config['dest'] + version + '/'
-    dest = destPath + filename
-    src_path = source + filename
-
-    # read destination file if it exits
-    dest_data = readJSON(dest) if exists(dest) else list()
-
+    options['version'] = version
     # extract data
     options = {
         'tag':file_id, 
         'padding':padding,
         'remove_stopwords':True,
-        'version':version
     }
-    data = readJSON(src_path)
-    x = extract(data, pattern, options)
 
-    # append previously extracted data
-    dest_data.extend(x)
-    jsonData = json.dumps(dest_data)
+    if noise:
+        extract_noise(ref, options)
+    else
+        extract_labels(ref, options)
 
-    # save data
-    if (not exists(destPath)): mkdir(destPath, mode=0o777)
-    f = open(dest, 'w')
-    f.write(jsonData)
-    f.close()
+
+def extract_labels(ref, options={}):
+
+    for index,row in ref.iterrows():
+        
+        pattern = row['cleaned_label']
+        file_id = row['Id']
+        filename = file_id + '.json'
+        destPath = config['dest'] + version + '/'
+        dest = destPath + filename
+        src_path = source + filename
+
+        data = extract(readJSON(src_path), pattern, options)
+
+        # append previously extracted data
+        dest_data = readJSON(dest) if exists(dest) else list()
+        dest_data.extend(data)
+        jsonData = json.dumps(dest_data)
+
+        # save data
+        if (not exists(destPath)): mkdir(destPath, mode=0o777)
+        f = open(dest, 'w')
+        f.write(jsonData)
+        f.close()
+
+def extract_noise()
